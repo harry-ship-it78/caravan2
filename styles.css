@@ -1,0 +1,34 @@
+/* Only the parts relevant to fixes are shown; keep your existing file and update these rules */
+
+/* Cards */
+.card {
+  position: absolute;
+  width: 92px;
+  height: 133px;
+  background: #fff;
+  color: #000;
+  border-radius: 8px;
+  border: 1px solid var(--card-border, #dcdcdc);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  user-select: none;
+  -webkit-user-drag: element;
+}
+.card.small { width: 92px; height: 133px; }
+.card.red { color: #c62828; }
+.card.black { color: #000; }
+
+/* Remove yellow tint on face cards */
+.card.face { background: #fff; }
+
+/* Kept from before */
+.card.removed { opacity: 0.55; filter: grayscale(0.8); }
+.card .corner { position: absolute; height: 29px; line-height: 1.1; font-size: 14px; }
+.card .corner.tl { top: 6px; left: 6px; text-align: left; }
+.card .corner.br { bottom: 6px; right: 6px; text-align: right; }
+.card .center { position: absolute; inset: 0; display: grid; place-items: center; font-size: 28px; }
+.card .center.small { font-size: 22px; }
+
+/* Drag/tap cues */
+.highlight-target { outline: 3px solid rgba(63,167,255,0.8); outline-offset: -3px; }
+.pile .drop-target,
+.pile .card-target { box-shadow: 0 0 0 3px rgba(63,167,255,0.7) inset; }

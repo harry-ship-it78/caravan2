@@ -1,0 +1,49 @@
+/* Touch target sizes and spacing for mobile */
+@media (hover: none), (pointer: coarse) {
+  .btn, button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  .cards .card {
+    width: 68px;
+    height: 92px;
+  }
+}
+
+/* Selection and valid target highlighting */
+.card.selected {
+  outline: 3px solid #3fa7ff;
+  outline-offset: 2px;
+}
+
+.pile .drop-target,
+.pile .card-target {
+  box-shadow: 0 0 0 3px rgba(63,167,255,0.7) inset;
+}
+
+/* Responsive layout tweaks */
+@media (max-width: 900px) {
+  .board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .divider {
+    display: none;
+  }
+  .side h2 {
+    font-size: 18px;
+  }
+}
+
+/* Reduce motion for users preferring it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
