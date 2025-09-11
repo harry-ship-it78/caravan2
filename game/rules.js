@@ -32,6 +32,21 @@ export function isNumericOrAce(card) {
   return card?.rank === 'A' || isNumberCard(card);
 }
 
+// Find the index of the top non-removed numeric/ace card in a pile
+// This is the only valid target for face cards
+export function findTopNonRemovedCardIndex(pileCards) {
+  if (!pileCards || pileCards.length === 0) return -1;
+  
+  // Search from the end (most recent) backwards to find the first non-removed numeric/ace card
+  for (let i = pileCards.length - 1; i >= 0; i--) {
+    const card = pileCards[i];
+    if (isNumericOrAce(card) && !card.removed) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 // Visible view: do NOT reverse. Track queen parity separately for UI.
 export function computePileView(pileCards) {
   const qCount = pileCards.reduce((acc, c) => acc + (c.rank === 'Q' && !c.removed ? 1 : 0), 0);
@@ -119,6 +134,11 @@ export function canPlaceCardOnTargetWithReason(card, pileCards, sourceSide, targ
     }
     if (pileCards.length === 0) {
       return { ok: false, reason: 'Cannot play picture cards onto an empty opponent pile.' };
+    }
+    // Additional check: must have a valid target card
+    const topIndex = findTopNonRemovedCardIndex(pileCards);
+    if (topIndex === -1) {
+      return { ok: false, reason: 'No valid target card (all cards are removed).' };
     }
     return { ok: true };
   }

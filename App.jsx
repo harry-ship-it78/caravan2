@@ -5,6 +5,7 @@ import {
   canPlaceCardOnTargetWithReason,
   computePileView,
   computePlayerTotals,
+  findTopNonRemovedCardIndex,
   isFaceCard,
   isNumericOrAce
 } from './game/rules.js';
@@ -205,8 +206,15 @@ export default function App() {
         return false;
       }
 
+      const pileCards = game.players[targetSide].piles[pileIndex].cards;
+      const topNonRemovedIndex = findTopNonRemovedCardIndex(pileCards);
+      
+      // Face cards can only target the top non-removed card
+      if (targetVisibleIndex !== topNonRemovedIndex) {
+        return false;
+      }
+
       if (card.rank === 'K') {
-        const pileCards = game.players[targetSide].piles[pileIndex].cards;
         const targetCard = pileCards[targetVisibleIndex];
         const isValidTarget = targetCard && isNumericOrAce(targetCard) && !targetCard.removed;
         if (!isValidTarget) return false;
@@ -317,8 +325,10 @@ export default function App() {
           const can = canPlaceCardOnTarget(card, pile.cards, 'ai', 'ai');
           if (can) {
             if (isFaceCard(card) && pile.cards.length > 0) {
-              const targetIdx = pile.cards.length - 1;
-              moves.push({ actor: 'ai', target: 'ai', cardId: card.id, pileIndex: i, tvi: targetIdx });
+              const targetIdx = findTopNonRemovedCardIndex(pile.cards);
+              if (targetIdx !== -1) {
+                moves.push({ actor: 'ai', target: 'ai', cardId: card.id, pileIndex: i, tvi: targetIdx });
+              }
             } else if (isNumericOrAce(card)) {
               moves.push({ actor: 'ai', target: 'ai', cardId: card.id, pileIndex: i, tvi: null });
             }
@@ -328,8 +338,10 @@ export default function App() {
           const pile = g.players.player.piles[i];
           const can = canPlaceCardOnTarget(card, pile.cards, 'ai', 'player');
           if (can && isFaceCard(card) && pile.cards.length > 0) {
-            const targetIdx = pile.cards.length - 1;
-            moves.push({ actor: 'ai', target: 'player', cardId: card.id, pileIndex: i, tvi: targetIdx });
+            const targetIdx = findTopNonRemovedCardIndex(pile.cards);
+            if (targetIdx !== -1) {
+              moves.push({ actor: 'ai', target: 'player', cardId: card.id, pileIndex: i, tvi: targetIdx });
+            }
           }
         }
       });
