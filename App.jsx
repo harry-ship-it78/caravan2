@@ -36,7 +36,6 @@ const initialGame = () => {
 
 export default function App() {
   const [game, setGame] = useState(initialGame);
-  const [selectedCardId, setSelectedCardId] = useState(null);
 
   const gameRef = useRef(game);
   useEffect(() => { gameRef.current = game; }, [game]);
@@ -48,7 +47,6 @@ export default function App() {
     if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
     aiTimerRef.current = null;
     aiMoveTokenRef.current++;
-    setSelectedCardId(null);
     setGame(initialGame());
   }, []);
 
@@ -175,14 +173,10 @@ export default function App() {
   }, []);
 
   const onSelectPlayerHandCard = useCallback((cardId) => {
-    if (game.gameOver || game.turn !== 'player') return;
-    setSelectedCardId((prev) => (prev === cardId ? null : cardId));
-  }, [game.gameOver, game.turn]);
+    // Card selection removed - drag/drop only
+  }, []);
 
-  const selectedPayload = useMemo(() => {
-    if (!selectedCardId) return null;
-    return { source: 'hand', owner: 'player', cardId: selectedCardId };
-  }, [selectedCardId]);
+  // Remove tap-to-place functionality - drag/drop only
 
   const canDropOnTargetPileContainer = useCallback(
     (targetSide, pileIndex, payload) => {
@@ -236,7 +230,6 @@ export default function App() {
           setGame((g) => ({ ...g, message: 'Picture cards (J/Q/K) must be dropped onto a specific card.' }));
           return;
         }
-        setSelectedCardId(null);
         placeCard(actor, 'player', payload.cardId, pileIndex, null);
       } catch {}
     },
@@ -257,7 +250,6 @@ export default function App() {
           setGame((g) => ({ ...g, message: 'Picture cards (J/Q/K) must be dropped onto a specific card.' }));
           return;
         }
-        setSelectedCardId(null);
         placeCard(actor, 'ai', payload.cardId, pileIndex, null);
       } catch {}
     },
@@ -274,7 +266,6 @@ export default function App() {
         if (actor !== game.turn) return;
         const card = game.players[actor].hand.find((c) => c.id === payload.cardId);
         if (!card || !isFaceCard(card)) return;
-        setSelectedCardId(null);
         placeCard(actor, 'player', payload.cardId, pileIndex, targetVisibleIndex);
       } catch {}
     },
@@ -291,7 +282,6 @@ export default function App() {
         if (actor !== game.turn) return;
         const card = game.players[actor].hand.find((c) => c.id === payload.cardId);
         if (!card || !isFaceCard(card)) return;
-        setSelectedCardId(null);
         placeCard(actor, 'ai', payload.cardId, pileIndex, targetVisibleIndex);
       } catch {}
     },
@@ -425,7 +415,6 @@ export default function App() {
                 onDropCard={(targetVisibleIndex, data) => onDropToAiPileCard(idx, targetVisibleIndex, data)}
                 isDropAllowedCard={pilesDroppable}
                 onCanDropCard={(targetVisibleIndex, payload) => canDropOnTargetPileCard('ai', idx, targetVisibleIndex, payload)}
-                selectedPayload={selectedPayload}
               />
             ))}
           </div>
@@ -450,7 +439,6 @@ export default function App() {
                 onDropCard={(targetVisibleIndex, data) => onDropToPlayerPileCard(idx, targetVisibleIndex, data)}
                 isDropAllowedCard={pilesDroppable}
                 onCanDropCard={(targetVisibleIndex, payload) => canDropOnTargetPileCard('player', idx, targetVisibleIndex, payload)}
-                selectedPayload={selectedPayload}
               />
             ))}
           </div>
@@ -460,7 +448,6 @@ export default function App() {
             cards={game.players.player.hand}
             disabled={game.turn !== 'player' || game.gameOver}
             onSelectCard={onSelectPlayerHandCard}
-            selectedCardId={selectedCardId}
           />
         </section>
       </main>
