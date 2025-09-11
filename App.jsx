@@ -206,15 +206,8 @@ export default function App() {
         return false;
       }
 
-      const pileCards = game.players[targetSide].piles[pileIndex].cards;
-      const topNonRemovedIndex = findTopNonRemovedCardIndex(pileCards);
-      
-      // Face cards can only target the top non-removed card
-      if (targetVisibleIndex !== topNonRemovedIndex) {
-        return false;
-      }
-
       if (card.rank === 'K') {
+        const pileCards = game.players[targetSide].piles[pileIndex].cards;
         const targetCard = pileCards[targetVisibleIndex];
         const isValidTarget = targetCard && isNumericOrAce(targetCard) && !targetCard.removed;
         if (!isValidTarget) return false;
